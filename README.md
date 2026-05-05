@@ -3,16 +3,24 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ArttuAn/fee-forensics-agent/actions"><img alt="CI" src="https://img.shields.io/badge/CI-none-lightgrey" /></a>
+  <a href="https://github.com/ArttuAn/fee-forensics-agent/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/ArttuAn/fee-forensics-agent/actions/workflows/ci.yml/badge.svg" /></a>
+  <img alt="Coverage" src="https://img.shields.io/badge/Coverage-pytest--cov-blue" />
+  <img alt="Lint" src="https://img.shields.io/badge/Lint-ruff-purple" />
   <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-blue" />
   <img alt="Interface" src="https://img.shields.io/badge/Interface-CLI-informational" />
   <img alt="Output" src="https://img.shields.io/badge/Output-Markdown-success" />
+  <img alt="LangChain" src="https://img.shields.io/badge/LangChain-enabled-black" />
+  <img alt="LangSmith" src="https://img.shields.io/badge/LangSmith-tracing-black" />
   <img alt="License" src="https://img.shields.io/badge/License-Unlicensed-lightgrey" />
 </p>
 
 ## What this agent does
 
 **Fee Forensics** is a finance agent that audits bank statements to surface **hidden fees**, **recurring charges**, and **interest/penalty-like debits**, then generates a **negotiation-ready** report.
+
+<p align="center">
+  <img src="assets/pipeline.svg" width="1000" alt="Fee Forensics pipeline diagram" />
+</p>
 
 ### Input → model → output (simple mental model)
 
