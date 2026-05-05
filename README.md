@@ -100,6 +100,38 @@ fee-forensics audit sample-data\statement.csv --agreement sample-data\agreement.
 - **Sample output**: `examples/output/sample-report.md`
 - **PowerShell runner**: `examples/run_examples.ps1`
 
+## LangChain + LangSmith (explain workflow)
+
+Fee Forensics uses **LangChain** for an optional workflow that turns a generated report into:
+
+- a **negotiation email** to your bank
+- a **questions checklist** for the call
+
+### Install LLM extras
+
+```bash
+pip install -e ".[llm]"
+```
+
+### Enable LangSmith tracing (optional)
+
+Set environment variables:
+
+```powershell
+$env:LANGCHAIN_TRACING_V2="true"
+$env:LANGCHAIN_API_KEY="YOUR_LANGSMITH_KEY"
+$env:LANGCHAIN_PROJECT="fee-forensics"
+```
+
+Notes:
+- Some setups use `LANGSMITH_TRACING="true"` instead. Either works for most environments.
+
+### Generate negotiation pack from a report
+
+```bash
+fee-forensics explain reports\sample-report.md --out-dir reports\explain --provider openai --model gpt-4o-mini
+```
+
 ## What the report looks like (preview)
 
 You’ll get:
