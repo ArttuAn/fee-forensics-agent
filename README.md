@@ -1,18 +1,39 @@
-# Fee Forensics Agent (MVP)
+<p align="center">
+  <img src="assets/logo.svg" width="720" alt="Fee Forensics logo" />
+</p>
 
-A niche finance agent that audits bank statements to surface **hidden fees**, **recurring charges**, and **interest-like debits**, and produces a **negotiation-ready** report.
+<p align="center">
+  <a href="https://github.com/ArttuAn/fee-forensics-agent/actions"><img alt="CI" src="https://img.shields.io/badge/CI-none-lightgrey" /></a>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-blue" />
+  <img alt="Interface" src="https://img.shields.io/badge/Interface-CLI-informational" />
+  <img alt="Output" src="https://img.shields.io/badge/Output-Markdown-success" />
+  <img alt="License" src="https://img.shields.io/badge/License-Unlicensed-lightgrey" />
+</p>
 
-## What it does (today)
+## What this agent does
 
-- Parses bank statement exports (CSV)
-- Classifies likely bank fees / interest charges using deterministic heuristics
-- Aggregates by month, category, and counterparty-like patterns
-- Generates a Markdown report you can share with your bank/account manager
-- Optionally reads an agreement/terms text file and extracts numeric fee caps it can compare against
+**Fee Forensics** is a niche finance agent that audits bank statements to surface **hidden fees**, **recurring charges**, and **interest/penalty-like debits**, then generates a **negotiation-ready** report.
+
+### Why it’s niche
+
+Most expense trackers tell you *where money went*. This agent focuses on *what the bank charged you*, why it’s recurring, and what you can take back to the bank (waiver review, tier review, fee schedule confirmation).
+
+### Pipeline (MVP)
+
+```mermaid
+flowchart LR
+  A[Statement CSV] --> B[Ingest & normalize]
+  B --> C[Heuristic classification]
+  C --> D[Monthly aggregation]
+  D --> E[Flag large items]
+  E --> F[Markdown report]
+  G[Agreement/terms text (optional)] --> H[Extract caps]
+  H --> F
+```
 
 ## Install
 
-Requires Python 3.10+.
+Requires **Python 3.10+**.
 
 ```bash
 python -m venv .venv
@@ -38,6 +59,21 @@ With agreement text:
 
 ```bash
 fee-forensics audit sample-data\statement.csv --agreement sample-data\agreement.txt --out reports\report.md
+```
+
+## What the report looks like (preview)
+
+You’ll get:
+
+- **Executive summary** totals (credits, debits, estimated fees, estimated interest/penalties)
+- **Monthly breakdown** table (fees vs interest vs other debits)
+- **Flagged** high-impact fee/interest items
+- **Most common** descriptions (helps spot recurring line-items)
+
+Example section:
+
+```text
+Fees: 155.75 | Interest: 60.92 | Debits: 1,027.22
 ```
 
 ## CSV format
