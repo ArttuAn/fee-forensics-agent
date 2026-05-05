@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+env/
+.env
+
+dist/
+build/
+*.egg-info/
+
+# Data artifacts
+*.parquet
+*.feather
+*.xlsx
+*.pdf
+reports/
