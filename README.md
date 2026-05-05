@@ -31,6 +31,39 @@ flowchart LR
   H --> F
 ```
 
+### How it works (sequence)
+
+```mermaid
+sequenceDiagram
+  participant U as You
+  participant CLI as fee-forensics CLI
+  participant I as Ingest (CSV)
+  participant A as Analyzer
+  participant R as Report (Markdown)
+
+  U->>CLI: audit statement.csv
+  CLI->>I: read_statement_csv()
+  I-->>CLI: transactions[]
+  CLI->>A: audit(transactions)
+  A-->>CLI: totals + buckets + flagged
+  CLI->>R: render_markdown(...)
+  R-->>CLI: report.md
+  CLI-->>U: report written
+```
+
+### Components
+
+```mermaid
+flowchart TB
+  subgraph pkg[finance_agent/]
+    ingest[ingest.py\nread_statement_csv]
+    analysis[analysis.py\nclassify + audit]
+    reporting[reporting.py\nrender_markdown + agreement caps]
+    cli[cli.py\nTyper CLI]
+  end
+  cli --> ingest --> analysis --> reporting --> cli
+```
+
 ## Install
 
 Requires **Python 3.10+**.
@@ -60,6 +93,12 @@ With agreement text:
 ```bash
 fee-forensics audit sample-data\statement.csv --agreement sample-data\agreement.txt --out reports\report.md
 ```
+
+## Practical examples (in-repo)
+
+- **Examples folder**: see `examples/README.md`
+- **Sample output**: `examples/output/sample-report.md`
+- **PowerShell runner**: `examples/run_examples.ps1`
 
 ## What the report looks like (preview)
 
