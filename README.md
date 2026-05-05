@@ -26,6 +26,35 @@ In the simplest example, the key outputs are:
 Fees: 155.75 | Interest: 60.92 | Debits: 1,027.22
 ```
 
+#### Comprehensive example (input → model → output)
+
+**1) Input (CSV snippet)**
+
+```csv
+date,description,amount
+2026-01-02,MONTHLY MAINTENANCE FEE,-15.00
+2026-01-07,INCOMING WIRE FEE,-25.00
+2026-01-10,INTEREST CHARGE,-42.17
+2026-01-05,ACH CREDIT PAYROLL,2500.00
+```
+
+**2) Model (run the analyzer)**
+
+```bash
+fee-forensics audit sample-data\statement.csv --agreement sample-data\agreement.txt --out reports\sample-report.md
+```
+
+**3) Output (report excerpt)**
+
+```markdown
+## Executive summary
+
+- **Total credits**: 2,500.00
+- **Total debits**: 1,027.22
+- **Estimated bank fees**: 155.75
+- **Estimated interest/penalties**: 60.92
+```
+
 ### Why it’s different
 
 Most expense trackers tell you *where money went*. This agent focuses on *what the bank charged you*, why it’s recurring, and what you can take back to the bank (waiver review, tier review, fee schedule confirmation).
