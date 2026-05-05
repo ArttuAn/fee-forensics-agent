@@ -27,7 +27,7 @@ flowchart LR
   C --> D[Monthly aggregation]
   D --> E[Flag large items]
   E --> F[Markdown report]
-  G[Agreement/terms text (optional)] --> H[Extract caps]
+  G["Agreement terms text (optional)"] --> H[Extract caps]
   H --> F
 ```
 
