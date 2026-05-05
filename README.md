@@ -12,9 +12,9 @@
 
 ## What this agent does
 
-**Fee Forensics** is a niche finance agent that audits bank statements to surface **hidden fees**, **recurring charges**, and **interest/penalty-like debits**, then generates a **negotiation-ready** report.
+**Fee Forensics** is a finance agent that audits bank statements to surface **hidden fees**, **recurring charges**, and **interest/penalty-like debits**, then generates a **negotiation-ready** report.
 
-### Why it’s niche
+### Why it’s different
 
 Most expense trackers tell you *where money went*. This agent focuses on *what the bank charged you*, why it’s recurring, and what you can take back to the bank (waiver review, tier review, fee schedule confirmation).
 

@@ -1,7 +1,7 @@
 [project]
 name = "fee-forensics-agent"
 version = "0.1.0"
-description = "Niche finance AI agent: bank fee forensics + statement audit."
+description = "Finance AI agent: bank fee forensics + statement audit."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
