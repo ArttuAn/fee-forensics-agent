@@ -20,9 +20,17 @@ def _first_present_column(df: pd.DataFrame, candidates: list[str]) -> str:
 def _parse_date(value: object) -> date:
     if value is None or (isinstance(value, float) and pd.isna(value)):
         raise ValueError("Empty date")
-    if isinstance(value, (pd.Timestamp,)):
+    if isinstance(value, pd.Timestamp):
         return value.date()
     return date_parser.parse(str(value)).date()
+
+
+def _is_blank(value: object) -> bool:
+    if value is None:
+        return True
+    if isinstance(value, float) and pd.isna(value):
+        return True
+    return str(value).strip() == ""
 
 
 def read_statement_csv(path: str | Path) -> list[Transaction]:
@@ -31,16 +39,25 @@ def read_statement_csv(path: str | Path) -> list[Transaction]:
         raise FileNotFoundError(str(p))
 
     df = pd.read_csv(p)
+    if df.empty:
+        raise ValueError(f"No transactions found in {p}")
 
     date_col = _first_present_column(df, ["date", "transaction_date", "posting_date"])
     desc_col = _first_present_column(df, ["description", "memo", "details", "narrative"])
     amt_col = _first_present_column(df, ["amount", "amt", "value"])
 
     txns: list[Transaction] = []
-    for _, row in df.iterrows():
-        txn_date = _parse_date(row[date_col])
-        description = "" if row[desc_col] is None else str(row[desc_col]).strip()
-        amount = float(row[amt_col])
+    for row_idx, row in df.iterrows():
+        if _is_blank(row[date_col]) and _is_blank(row[amt_col]):
+            continue
+        try:
+            txn_date = _parse_date(row[date_col])
+            description = "" if _is_blank(row[desc_col]) else str(row[desc_col]).strip()
+            amount = float(row[amt_col])
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"Invalid row {row_idx + 2} in {p}: {exc}") from exc
         txns.append(Transaction(txn_date=txn_date, description=description, amount=amount))
-    return txns
 
+    if not txns:
+        raise ValueError(f"No valid transactions found in {p}")
+    return txns

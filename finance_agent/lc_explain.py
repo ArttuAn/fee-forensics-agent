@@ -33,7 +33,8 @@ def build_explain_chain(llm) -> tuple[object, object]:
             ),
             (
                 "user",
-                "Given this Fee Forensics report, draft an email to a bank relationship manager requesting a fee review.\n\n"
+                "Given this Fee Forensics report, draft an email to a bank "
+                "relationship manager requesting a fee review.\n\n"
                 "Constraints:\n"
                 "- Keep it under 220 words\n"
                 "- Use bullet points for key evidence\n"
@@ -53,7 +54,8 @@ def build_explain_chain(llm) -> tuple[object, object]:
             ),
             (
                 "user",
-                "From this Fee Forensics report, create a checklist of questions to ask the bank.\n\n"
+                "From this Fee Forensics report, create a checklist of questions "
+                "to ask the bank.\n\n"
                 "Constraints:\n"
                 "- 10-14 bullets max\n"
                 "- Group into 3 sections with headings\n"
@@ -87,5 +89,6 @@ def explain_from_report_markdown(report_path: str | Path, *, llm) -> ExplainArti
     negotiation_email = email_chain.invoke(report_input)
     questions_checklist = checklist_chain.invoke(report_input)
 
-    return ExplainArtifacts(negotiation_email=negotiation_email, questions_checklist=questions_checklist)
-
+    return ExplainArtifacts(
+        negotiation_email=negotiation_email, questions_checklist=questions_checklist
+    )

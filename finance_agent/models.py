@@ -10,4 +10,3 @@ class Transaction:
     description: str
     amount: float
     currency: str | None = None
-

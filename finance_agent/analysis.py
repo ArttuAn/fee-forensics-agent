@@ -7,30 +7,39 @@ from datetime import date
 
 from finance_agent.models import Transaction
 
+FEE_KEYWORDS = sorted(
+    [
+        "fee",
+        "service charge",
+        "maintenance",
+        "account charge",
+        "monthly charge",
+        "overdraft",
+        "nsf",
+        "returned item",
+        "wire",
+        "swift",
+        "transfer fee",
+        "atm fee",
+        "foreign transaction",
+        "fx fee",
+    ],
+    key=len,
+    reverse=True,
+)
 
-FEE_KEYWORDS = [
-    "fee",
-    "service charge",
-    "maintenance",
-    "account charge",
-    "monthly charge",
-    "overdraft",
-    "nsf",
-    "returned item",
-    "wire",
-    "swift",
-    "transfer fee",
-    "atm fee",
-    "foreign transaction",
-    "fx fee",
-]
+INTEREST_KEYWORDS = sorted(
+    [
+        "interest",
+        "finance charge",
+        "late charge",
+        "penalty interest",
+    ],
+    key=len,
+    reverse=True,
+)
 
-INTEREST_KEYWORDS = [
-    "interest",
-    "finance charge",
-    "late charge",
-    "penalty interest",
-]
+_EMPTY_MONTH_BUCKETS = {"fee": 0.0, "interest": 0.0, "other_debits": 0.0}
 
 
 def _norm(s: str) -> str:
@@ -57,6 +66,7 @@ class AuditReport:
     top_descriptions: list[tuple[str, int]]
     by_month: dict[str, dict[str, float]]  # month -> {fee, interest, other_debits}
     flagged: list[ClassifiedTransaction]
+    fee_items: list[ClassifiedTransaction]
 
 
 def classify_transactions(txns: list[Transaction]) -> list[ClassifiedTransaction]:
@@ -86,7 +96,7 @@ def audit(txns: list[Transaction], *, flag_threshold_abs: float = 25.0) -> Audit
     interest_total = sum(-c.txn.amount for c in classified if c.category == "interest")
 
     desc_counter: Counter[str] = Counter()
-    by_month: dict[str, dict[str, float]] = defaultdict(lambda: {"fee": 0.0, "interest": 0.0, "other_debits": 0.0})
+    by_month: dict[str, dict[str, float]] = defaultdict(lambda: dict(_EMPTY_MONTH_BUCKETS))
     flagged: list[ClassifiedTransaction] = []
 
     for c in classified:
@@ -102,6 +112,10 @@ def audit(txns: list[Transaction], *, flag_threshold_abs: float = 25.0) -> Audit
             flagged.append(c)
 
     top_descriptions = desc_counter.most_common(15)
+    by_month_rounded = {
+        k: {kk: round(vv, 2) for kk, vv in v.items()} for k, v in sorted(by_month.items())
+    }
+    fee_items = [c for c in classified if c.category == "fee"]
 
     return AuditReport(
         total_debits=round(total_debits, 2),
@@ -109,7 +123,7 @@ def audit(txns: list[Transaction], *, flag_threshold_abs: float = 25.0) -> Audit
         fee_total=round(fee_total, 2),
         interest_total=round(interest_total, 2),
         top_descriptions=top_descriptions,
-        by_month={k: {kk: round(vv, 2) for kk, vv in v.items()} for k, v in sorted(by_month.items())},
+        by_month=by_month_rounded,
         flagged=sorted(flagged, key=lambda x: (-abs(x.txn.amount), x.txn.txn_date)),
+        fee_items=fee_items,
     )
-

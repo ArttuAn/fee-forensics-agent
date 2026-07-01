@@ -131,6 +131,12 @@ Use the included sample statement:
 fee-forensics audit sample-data\statement.csv --out reports\sample-report.md
 ```
 
+Or run the bundled demo (statement + agreement):
+
+```bash
+fee-forensics demo
+```
+
 Open the report:
 
 ```bash
@@ -157,6 +163,8 @@ Fee Forensics uses **LangChain** for an optional workflow that turns a generated
 - a **questions checklist** for the call
 
 ### Install LLM extras
+
+LangChain/LangSmith are optional — core audit works without them:
 
 ```bash
 pip install -e ".[llm]"
