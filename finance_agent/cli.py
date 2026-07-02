@@ -7,6 +7,7 @@ from rich.console import Console
 
 from finance_agent import __version__
 from finance_agent.analysis import audit
+from finance_agent.export import render_json
 from finance_agent.ingest import read_statement_csv
 from finance_agent.reporting import load_agreement_caps, render_markdown
 
@@ -38,6 +39,11 @@ def audit_cmd(
         "--flag-threshold",
         help="Flag single fee/interest debits >= this amount",
     ),
+    json_out: Path | None = typer.Option(
+        None,
+        "--json-out",
+        help="Optional path for machine-readable JSON summary",
+    ),
 ) -> None:
     """Audit a statement CSV and produce a negotiation-ready Markdown report."""
     txns = read_statement_csv(statement_csv)
@@ -47,6 +53,11 @@ def audit_cmd(
     md = render_markdown(rep, agreement=caps)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(md, encoding="utf-8")
+
+    if json_out is not None:
+        json_out.parent.mkdir(parents=True, exist_ok=True)
+        json_out.write_text(render_json(rep, version=__version__, agreement=caps), encoding="utf-8")
+        console.print(f"[bold green]Wrote JSON:[/bold green] {json_out}")
 
     console.print(f"[bold green]Wrote report:[/bold green] {out}")
     summary = (
@@ -89,6 +100,7 @@ def demo_cmd(
         out=out,
         agreement=agreement,
         flag_threshold_abs=25.0,
+        json_out=None,
     )
 
 

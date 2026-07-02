@@ -58,6 +58,15 @@ class ClassifiedTransaction:
 
 
 @dataclass(frozen=True)
+class RecurringFee:
+    description: str
+    occurrences: int
+    months_active: int
+    total: float
+    average: float
+
+
+@dataclass(frozen=True)
 class AuditReport:
     total_debits: float
     total_credits: float
@@ -67,6 +76,7 @@ class AuditReport:
     by_month: dict[str, dict[str, float]]  # month -> {fee, interest, other_debits}
     flagged: list[ClassifiedTransaction]
     fee_items: list[ClassifiedTransaction]
+    recurring_fees: list[RecurringFee]
 
 
 def classify_transactions(txns: list[Transaction]) -> list[ClassifiedTransaction]:
@@ -84,6 +94,31 @@ def classify_transactions(txns: list[Transaction]) -> list[ClassifiedTransaction
         else:
             out.append(ClassifiedTransaction(txn=t, category="other", matched=None))
     return out
+
+
+def _find_recurring_fees(fee_items: list[ClassifiedTransaction]) -> list[RecurringFee]:
+    grouped: dict[str, list[ClassifiedTransaction]] = defaultdict(list)
+    for item in fee_items:
+        grouped[_norm(item.txn.description)[:80]].append(item)
+
+    recurring: list[RecurringFee] = []
+    for description, items in grouped.items():
+        months = {_month_key(i.txn.txn_date) for i in items}
+        if len(months) < 2:
+            continue
+        total = sum(-i.txn.amount for i in items)
+        occurrences = len(items)
+        recurring.append(
+            RecurringFee(
+                description=description,
+                occurrences=occurrences,
+                months_active=len(months),
+                total=round(total, 2),
+                average=round(total / occurrences, 2),
+            )
+        )
+
+    return sorted(recurring, key=lambda r: (-r.total, -r.months_active, r.description))
 
 
 def audit(txns: list[Transaction], *, flag_threshold_abs: float = 25.0) -> AuditReport:
@@ -116,6 +151,7 @@ def audit(txns: list[Transaction], *, flag_threshold_abs: float = 25.0) -> Audit
         k: {kk: round(vv, 2) for kk, vv in v.items()} for k, v in sorted(by_month.items())
     }
     fee_items = [c for c in classified if c.category == "fee"]
+    recurring_fees = _find_recurring_fees(fee_items)
 
     return AuditReport(
         total_debits=round(total_debits, 2),
@@ -126,4 +162,5 @@ def audit(txns: list[Transaction], *, flag_threshold_abs: float = 25.0) -> Audit
         by_month=by_month_rounded,
         flagged=sorted(flagged, key=lambda x: (-abs(x.txn.amount), x.txn.txn_date)),
         fee_items=fee_items,
+        recurring_fees=recurring_fees,
     )

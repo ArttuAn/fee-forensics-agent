@@ -208,9 +208,17 @@ Fees: 155.75 | Interest: 60.92 | Debits: 1,027.22
 
 Minimum columns (case-insensitive; extra columns ok):
 
-- `date` (or `transaction_date`)
-- `description` (or `memo`)
+- `date` (or `transaction_date`, `posting_date`)
+- `description` (or `memo`, `details`, `narrative`)
 - `amount` (positive = credit, negative = debit)
+
+Alternatively, use separate **debit** and **credit** columns (`debit`/`credit`, `withdrawal`/`deposit`, etc.).
+
+### JSON export (automation)
+
+```bash
+fee-forensics audit sample-data\statement.csv --out reports\report.md --json-out reports\report.json
+```
 
 ## Notes / roadmap
 

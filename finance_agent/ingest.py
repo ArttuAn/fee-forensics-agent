@@ -33,6 +33,37 @@ def _is_blank(value: object) -> bool:
     return str(value).strip() == ""
 
 
+def _float_or_zero(value: object) -> float:
+    if _is_blank(value):
+        return 0.0
+    return float(value)
+
+
+def _resolve_amount_columns(df: pd.DataFrame) -> tuple[str, str, str | None]:
+    try:
+        amount_col = _first_present_column(df, ["amount", "amt", "value"])
+        return "single", amount_col, None
+    except ValueError:
+        debit_col = _first_present_column(
+            df,
+            ["debit", "debits", "withdrawal", "withdrawals", "out", "money out"],
+        )
+        credit_col = _first_present_column(
+            df,
+            ["credit", "credits", "deposit", "deposits", "in", "money in"],
+        )
+        return "split", debit_col, credit_col
+
+
+def _row_amount(row: pd.Series, mode: str, amount_col: str, credit_col: str | None) -> float:
+    if mode == "single":
+        return float(row[amount_col])
+    assert credit_col is not None
+    debit = _float_or_zero(row[amount_col])
+    credit = _float_or_zero(row[credit_col])
+    return credit - debit
+
+
 def read_statement_csv(path: str | Path) -> list[Transaction]:
     p = Path(path)
     if not p.exists():
@@ -44,18 +75,30 @@ def read_statement_csv(path: str | Path) -> list[Transaction]:
 
     date_col = _first_present_column(df, ["date", "transaction_date", "posting_date"])
     desc_col = _first_present_column(df, ["description", "memo", "details", "narrative"])
-    amt_col = _first_present_column(df, ["amount", "amt", "value"])
+    amount_mode, primary_col, secondary_col = _resolve_amount_columns(df)
 
     txns: list[Transaction] = []
     for row_idx, row in df.iterrows():
-        if _is_blank(row[date_col]) and _is_blank(row[amt_col]):
+        if amount_mode == "single":
+            if _is_blank(row[date_col]) and _is_blank(row[primary_col]):
+                continue
+        elif (
+            _is_blank(row[date_col])
+            and _is_blank(row[primary_col])
+            and _is_blank(row[secondary_col])
+        ):
             continue
+
         try:
             txn_date = _parse_date(row[date_col])
             description = "" if _is_blank(row[desc_col]) else str(row[desc_col]).strip()
-            amount = float(row[amt_col])
+            amount = _row_amount(row, amount_mode, primary_col, secondary_col)
         except (TypeError, ValueError) as exc:
             raise ValueError(f"Invalid row {row_idx + 2} in {p}: {exc}") from exc
+
+        if amount == 0.0 and not description:
+            continue
+
         txns.append(Transaction(txn_date=txn_date, description=description, amount=amount))
 
     if not txns:

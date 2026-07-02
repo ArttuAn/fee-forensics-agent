@@ -62,6 +62,12 @@ def _fmt_cap(value: float | None) -> str:
     return _EMPTY_CAP if value is None else f"{value:,.2f}"
 
 
+def _contains_term(text: str, term: str) -> bool:
+    if " " in term:
+        return term in text
+    return re.search(rf"\b{re.escape(term)}\b", text) is not None
+
+
 def find_cap_breaches(
     report: AuditReport,
     agreement: AgreementCaps,
@@ -78,7 +84,7 @@ def find_cap_breaches(
         if cap_value is None or c.category != "fee":
             return
         desc = c.txn.description.lower()
-        if not any(n in desc for n in desc_needles):
+        if not any(_contains_term(desc, n) for n in desc_needles):
             return
         amount = -c.txn.amount
         if amount > cap_value:
@@ -127,7 +133,23 @@ def render_markdown(report: AuditReport, *, agreement: AgreementCaps | None = No
     lines.append(f"- **Total debits**: {report.total_debits:,.2f}")
     lines.append(f"- **Estimated bank fees**: {report.fee_total:,.2f}")
     lines.append(f"- **Estimated interest/penalties**: {report.interest_total:,.2f}")
+    bank_charges = report.fee_total + report.interest_total
+    if report.total_debits > 0:
+        share = 100.0 * bank_charges / report.total_debits
+        lines.append(f"- **Bank charges as % of debits**: {share:.1f}%")
     lines.append("")
+
+    if report.recurring_fees:
+        lines.append("## Recurring fees (2+ months)")
+        lines.append("")
+        lines.append("| Description | Months | Occurrences | Total | Avg |")
+        lines.append("|---|---:|---:|---:|---:|")
+        for fee in report.recurring_fees[:20]:
+            lines.append(
+                f"| {fee.description.replace('|', ' ')} | {fee.months_active} | "
+                f"{fee.occurrences} | {fee.total:,.2f} | {fee.average:,.2f} |"
+            )
+        lines.append("")
 
     if agreement:
         lines.append("## Agreement caps (extracted)")
@@ -141,7 +163,7 @@ def render_markdown(report: AuditReport, *, agreement: AgreementCaps | None = No
         lines.append("## Possible agreement cap breaches")
         lines.append("")
         if not breaches:
-            lines.append("_No flagged fee items exceed extracted caps._")
+            lines.append("_No fee items exceed extracted caps._")
         else:
             lines.append("| Date | Type | Charged | Cap | Over by | Description |")
             lines.append("|---|---|---:|---:|---:|---|")

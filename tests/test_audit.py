@@ -104,6 +104,15 @@ def test_render_markdown_includes_cap_breach_section() -> None:
     assert "MONTHLY MAINTENANCE FEE" in md
 
 
+def test_cap_breach_does_not_false_positive_on_transfer() -> None:
+    txns = [_txn(8, "SWIFT TRANSFER FEE", -40.0)]
+    rep = audit(txns, flag_threshold_abs=1.0)
+    caps = AgreementCaps(wire_fee_cap=20.0, overdraft_fee_cap=30.0)
+    breaches = find_cap_breaches(rep, caps)
+    cap_types = {b.cap_type for b in breaches}
+    assert cap_types == {"wire"}
+
+
 def test_read_statement_csv_missing_column(tmp_path: Path) -> None:
     csv_path = tmp_path / "bad.csv"
     csv_path.write_text("date,description\n2026-01-01,FEE\n", encoding="utf-8")
