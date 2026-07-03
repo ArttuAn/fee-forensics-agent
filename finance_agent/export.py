@@ -18,6 +18,14 @@ class AuditExport:
 
 
 def _fee_share_pct(report: AuditReport) -> float | None:
+    """Calculate the percentage of total debits that are bank charges.
+    
+    Args:
+        report: Audit report containing totals
+        
+    Returns:
+        Percentage as float, or None if debits <= 0
+    """
     if report.total_debits <= 0:
         return None
     bank_charges = report.fee_total + report.interest_total
@@ -25,6 +33,14 @@ def _fee_share_pct(report: AuditReport) -> float | None:
 
 
 def _flagged_rows(report: AuditReport) -> list[dict[str, object]]:
+    """Convert flagged transactions to dict format for JSON export.
+    
+    Args:
+        report: Audit report containing flagged items
+        
+    Returns:
+        List of dictionaries with transaction details
+    """
     rows: list[dict[str, object]] = []
     for c in report.flagged:
         rows.append(
@@ -40,6 +56,14 @@ def _flagged_rows(report: AuditReport) -> list[dict[str, object]]:
 
 
 def _breach_rows(breaches: list[CapBreach]) -> list[dict[str, object]]:
+    """Convert cap breaches to dict format for JSON export.
+    
+    Args:
+        breaches: List of cap breach objects
+        
+    Returns:
+        List of dictionaries with breach details
+    """
     return [asdict(b) for b in breaches]
 
 
@@ -49,6 +73,16 @@ def build_audit_export(
     version: str,
     agreement: AgreementCaps | None = None,
 ) -> AuditExport:
+    """Build a structured export object from an audit report.
+    
+    Args:
+        report: Audit report to export
+        version: Package version string
+        agreement: Optional agreement caps for breach detection
+        
+    Returns:
+        AuditExport object with all analysis data
+    """
     breaches = find_cap_breaches(report, agreement) if agreement else None
     return AuditExport(
         version=version,
@@ -75,5 +109,15 @@ def render_json(
     version: str,
     agreement: AgreementCaps | None = None,
 ) -> str:
+    """Render an audit report as JSON.
+    
+    Args:
+        report: Audit report to render
+        version: Package version string
+        agreement: Optional agreement caps for breach detection
+        
+    Returns:
+        JSON string with all analysis data
+    """
     payload = build_audit_export(report, version=version, agreement=agreement)
     return json.dumps(asdict(payload), indent=2) + "\n"

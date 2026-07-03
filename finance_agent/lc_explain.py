@@ -15,14 +15,29 @@ class ExplainArtifacts:
 
 
 def _load_text(path: Path) -> str:
+    """Load text content from a file.
+    
+    Args:
+        path: Path to the file
+        
+    Returns:
+        File content as string
+    """
     return path.read_text(encoding="utf-8", errors="ignore")
 
 
 def build_explain_chain(llm) -> tuple[object, object]:
-    """
+    """Build LangChain chains for generating negotiation email and checklist.
+    
     Returns two independent chains:
       - negotiation email generator
       - checklist generator
+    
+    Args:
+        llm: LangChain language model instance
+        
+    Returns:
+        Tuple of (email_chain, checklist_chain)
     """
     email_prompt = ChatPromptTemplate.from_messages(
         [
@@ -72,6 +87,18 @@ def build_explain_chain(llm) -> tuple[object, object]:
 
 
 def explain_from_report_markdown(report_path: str | Path, *, llm) -> ExplainArtifacts:
+    """Generate negotiation email and questions checklist from a report.
+    
+    Args:
+        report_path: Path to the Markdown report file
+        llm: LangChain language model instance
+        
+    Returns:
+        ExplainArtifacts containing email and checklist
+        
+    Raises:
+        ValueError: If report is empty
+    """
     p = Path(report_path)
     report_md = _load_text(p)
 

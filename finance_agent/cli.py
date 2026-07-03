@@ -46,26 +46,39 @@ def audit_cmd(
     ),
 ) -> None:
     """Audit a statement CSV and produce a negotiation-ready Markdown report."""
-    txns = read_statement_csv(statement_csv)
-    rep = audit(txns, flag_threshold_abs=flag_threshold_abs)
-    caps = load_agreement_caps(agreement) if agreement else None
+    try:
+        if flag_threshold_abs < 0:
+            raise typer.BadParameter("Flag threshold must be non-negative")
+        
+        txns = read_statement_csv(statement_csv)
+        rep = audit(txns, flag_threshold_abs=flag_threshold_abs)
+        caps = load_agreement_caps(agreement) if agreement else None
 
-    md = render_markdown(rep, agreement=caps)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(md, encoding="utf-8")
+        md = render_markdown(rep, agreement=caps)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(md, encoding="utf-8")
 
-    if json_out is not None:
-        json_out.parent.mkdir(parents=True, exist_ok=True)
-        json_out.write_text(render_json(rep, version=__version__, agreement=caps), encoding="utf-8")
-        console.print(f"[bold green]Wrote JSON:[/bold green] {json_out}")
+        if json_out is not None:
+            json_out.parent.mkdir(parents=True, exist_ok=True)
+            json_out.write_text(render_json(rep, version=__version__, agreement=caps), encoding="utf-8")
+            console.print(f"[bold green]Wrote JSON:[/bold green] {json_out}")
 
-    console.print(f"[bold green]Wrote report:[/bold green] {out}")
-    summary = (
-        f"Fees: [bold]{rep.fee_total:,.2f}[/bold] | "
-        f"Interest: [bold]{rep.interest_total:,.2f}[/bold] | "
-        f"Debits: {rep.total_debits:,.2f}"
-    )
-    console.print(summary)
+        console.print(f"[bold green]Wrote report:[/bold green] {out}")
+        summary = (
+            f"Fees: [bold]{rep.fee_total:,.2f}[/bold] | "
+            f"Interest: [bold]{rep.interest_total:,.2f}[/bold] | "
+            f"Debits: {rep.total_debits:,.2f}"
+        )
+        console.print(summary)
+    except FileNotFoundError as e:
+        console.print(f"[bold red]Error:[/bold red] File not found: {e}")
+        raise typer.Exit(1)
+    except ValueError as e:
+        console.print(f"[bold red]Error:[/bold red] {e}")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[bold red]Unexpected error:[/bold red] {e}")
+        raise typer.Exit(1)
 
 
 @app.command()
@@ -133,30 +146,40 @@ def explain_cmd(
       - LANGCHAIN_API_KEY=...
       - LANGCHAIN_PROJECT=fee-forensics (optional)
     """
-    if provider != "openai":
-        raise typer.BadParameter("Only --provider openai is supported in this MVP.")
-
     try:
-        from langchain_openai import ChatOpenAI  # type: ignore
-    except Exception as e:  # pragma: no cover
-        raise typer.BadParameter(
-            'Missing optional dependency for OpenAI. Install with: pip install -e ".[llm]"'
-        ) from e
+        if provider != "openai":
+            raise typer.BadParameter("Only --provider openai is supported in this MVP.")
 
-    from finance_agent.lc_explain import explain_from_report_markdown
+        try:
+            from langchain_openai import ChatOpenAI  # type: ignore
+        except Exception as e:  # pragma: no cover
+            raise typer.BadParameter(
+                'Missing optional dependency for OpenAI. Install with: pip install -e ".[llm]"'
+            ) from e
 
-    llm = ChatOpenAI(model=model, temperature=0)
-    artifacts = explain_from_report_markdown(report_md, llm=llm)
+        from finance_agent.lc_explain import explain_from_report_markdown
 
-    out_dir.mkdir(parents=True, exist_ok=True)
-    email_path = out_dir / "negotiation-email.txt"
-    checklist_path = out_dir / "questions-checklist.md"
+        llm = ChatOpenAI(model=model, temperature=0)
+        artifacts = explain_from_report_markdown(report_md, llm=llm)
 
-    email_path.write_text(artifacts.negotiation_email.strip() + "\n", encoding="utf-8")
-    checklist_path.write_text(artifacts.questions_checklist.strip() + "\n", encoding="utf-8")
+        out_dir.mkdir(parents=True, exist_ok=True)
+        email_path = out_dir / "negotiation-email.txt"
+        checklist_path = out_dir / "questions-checklist.md"
 
-    console.print(f"[bold green]Wrote:[/bold green] {email_path}")
-    console.print(f"[bold green]Wrote:[/bold green] {checklist_path}")
+        email_path.write_text(artifacts.negotiation_email.strip() + "\n", encoding="utf-8")
+        checklist_path.write_text(artifacts.questions_checklist.strip() + "\n", encoding="utf-8")
+
+        console.print(f"[bold green]Wrote:[/bold green] {email_path}")
+        console.print(f"[bold green]Wrote:[/bold green] {checklist_path}")
+    except FileNotFoundError as e:
+        console.print(f"[bold red]Error:[/bold red] File not found: {e}")
+        raise typer.Exit(1)
+    except ValueError as e:
+        console.print(f"[bold red]Error:[/bold red] {e}")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[bold red]Unexpected error:[/bold red] {e}")
+        raise typer.Exit(1)
 
 
 if __name__ == "__main__":

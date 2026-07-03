@@ -30,6 +30,16 @@ _MONEY_RE = re.compile(r"(?P<amt>\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|\d+(?:\.\d{1,2
 
 
 def extract_caps_from_text(text: str) -> AgreementCaps:
+    """Extract fee caps from agreement text using heuristic pattern matching.
+    
+    Searches for monetary values near keywords like 'monthly', 'wire', 'overdraft'.
+    
+    Args:
+        text: Agreement text to parse
+        
+    Returns:
+        AgreementCaps with extracted cap values (None if not found)
+    """
     t = text.lower()
 
     def _cap_near(needle: str) -> float | None:
@@ -50,6 +60,17 @@ def extract_caps_from_text(text: str) -> AgreementCaps:
 
 
 def load_agreement_caps(path: str | Path | None) -> AgreementCaps | None:
+    """Load and parse agreement caps from a text file.
+    
+    Args:
+        path: Path to the agreement file, or None to skip
+        
+    Returns:
+        AgreementCaps if path provided, None otherwise
+        
+    Raises:
+        FileNotFoundError: If the file doesn't exist
+    """
     if not path:
         return None
     p = Path(path)
@@ -59,10 +80,27 @@ def load_agreement_caps(path: str | Path | None) -> AgreementCaps | None:
 
 
 def _fmt_cap(value: float | None) -> str:
+    """Format a cap value for display.
+    
+    Args:
+        value: Cap value or None
+        
+    Returns:
+        Formatted string or 'n/a' if None
+    """
     return _EMPTY_CAP if value is None else f"{value:,.2f}"
 
 
 def _contains_term(text: str, term: str) -> bool:
+    """Check if text contains a term, handling multi-word and single-word terms.
+    
+    Args:
+        text: Text to search in
+        term: Term to search for
+        
+    Returns:
+        True if term is found, False otherwise
+    """
     if " " in term:
         return term in text
     return re.search(rf"\b{re.escape(term)}\b", text) is not None
@@ -72,6 +110,15 @@ def find_cap_breaches(
     report: AuditReport,
     agreement: AgreementCaps,
 ) -> list[CapBreach]:
+    """Find fee items that exceed agreement caps.
+    
+    Args:
+        report: Audit report containing fee items
+        agreement: Agreement caps to check against
+        
+    Returns:
+        List of cap breaches sorted by overage amount (descending)
+    """
     breaches: list[CapBreach] = []
 
     def _maybe_add(
@@ -124,6 +171,15 @@ def find_cap_breaches(
 
 
 def render_markdown(report: AuditReport, *, agreement: AgreementCaps | None = None) -> str:
+    """Generate a Markdown report from an audit.
+    
+    Args:
+        report: Audit report to render
+        agreement: Optional agreement caps for breach detection
+        
+    Returns:
+        Complete Markdown report as a string
+    """
     lines: list[str] = []
     lines.append("# Fee Forensics Report")
     lines.append("")

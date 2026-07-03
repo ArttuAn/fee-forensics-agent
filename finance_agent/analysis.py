@@ -43,10 +43,26 @@ _EMPTY_MONTH_BUCKETS = {"fee": 0.0, "interest": 0.0, "other_debits": 0.0}
 
 
 def _norm(s: str) -> str:
+    """Normalize a string by stripping, lowercasing, and collapsing whitespace.
+    
+    Args:
+        s: String to normalize
+        
+    Returns:
+        Normalized string
+    """
     return re.sub(r"\s+", " ", s.strip().lower())
 
 
 def _month_key(d: date) -> str:
+    """Generate a month key string from a date.
+    
+    Args:
+        d: Date object
+        
+    Returns:
+        String in format 'YYYY-MM'
+    """
     return f"{d.year:04d}-{d.month:02d}"
 
 
@@ -80,6 +96,17 @@ class AuditReport:
 
 
 def classify_transactions(txns: list[Transaction]) -> list[ClassifiedTransaction]:
+    """Classify transactions as fee, interest, or other based on keyword matching.
+    
+    Uses heuristic matching against known fee and interest keywords.
+    Fees and interest are only classified if they are debits (negative amounts).
+    
+    Args:
+        txns: List of transactions to classify
+        
+    Returns:
+        List of classified transactions with category and matched keyword
+    """
     out: list[ClassifiedTransaction] = []
     for t in txns:
         d = _norm(t.description)
@@ -97,6 +124,14 @@ def classify_transactions(txns: list[Transaction]) -> list[ClassifiedTransaction
 
 
 def _find_recurring_fees(fee_items: list[ClassifiedTransaction]) -> list[RecurringFee]:
+    """Identify recurring fees that appear in 2+ months.
+    
+    Args:
+        fee_items: List of classified fee transactions
+        
+    Returns:
+        List of recurring fees sorted by total amount (descending)
+    """
     grouped: dict[str, list[ClassifiedTransaction]] = defaultdict(list)
     for item in fee_items:
         grouped[_norm(item.txn.description)[:80]].append(item)
@@ -122,6 +157,18 @@ def _find_recurring_fees(fee_items: list[ClassifiedTransaction]) -> list[Recurri
 
 
 def audit(txns: list[Transaction], *, flag_threshold_abs: float = 25.0) -> AuditReport:
+    """Perform a comprehensive audit of bank transactions.
+    
+    Classifies transactions, calculates totals, identifies recurring fees,
+    and flags large fee/interest items.
+    
+    Args:
+        txns: List of transactions to audit
+        flag_threshold_abs: Minimum absolute amount to flag as large (default: 25.0)
+        
+    Returns:
+        AuditReport containing all analysis results
+    """
     classified = classify_transactions(txns)
 
     total_debits = sum(-c.txn.amount for c in classified if c.txn.amount < 0)

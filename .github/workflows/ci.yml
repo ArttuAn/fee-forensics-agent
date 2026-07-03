@@ -20,6 +20,14 @@ jobs:
         run: |
           ruff format --check .
           ruff check .
+      - name: Security check (bandit)
+        run: |
+          pip install bandit[toml]
+          bandit -r finance_agent/ -f json -o bandit-report.json || true
+      - name: Dependency check (pip-audit)
+        run: |
+          pip install pip-audit
+          pip-audit --desc || true
       - name: Tests (coverage)
         run: |
           pytest -q --cov-report=xml
