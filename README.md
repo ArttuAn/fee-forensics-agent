@@ -4,14 +4,17 @@
 
 <p align="center">
   <a href="https://github.com/ArttuAn/fee-forensics-agent/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/ArttuAn/fee-forensics-agent/actions/workflows/ci.yml/badge.svg" /></a>
-  <img alt="Coverage" src="https://img.shields.io/badge/Coverage-pytest--cov-blue" />
+  <a href="https://github.com/ArttuAn/fee-forensics-agent/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
+  <img alt="Coverage" src="https://img.shields.io/badge/Coverage-81%25-brightgreen" />
   <img alt="Lint" src="https://img.shields.io/badge/Lint-ruff-purple" />
   <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-blue" />
   <img alt="Interface" src="https://img.shields.io/badge/Interface-CLI-informational" />
   <img alt="Output" src="https://img.shields.io/badge/Output-Markdown-success" />
   <img alt="LangChain" src="https://img.shields.io/badge/LangChain-enabled-black" />
   <img alt="LangSmith" src="https://img.shields.io/badge/LangSmith-tracing-black" />
-  <img alt="License" src="https://img.shields.io/badge/License-Unlicensed-lightgrey" />
+  <img alt="Code Style" src="https://img.shields.io/badge/code%20style-ruff-21A1F1" />
+  <img alt="Pre-commit" src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" />
+  <img alt="Security" src="https://img.shields.io/badge/security-bandit-informational" />
 </p>
 
 ## What this agent does

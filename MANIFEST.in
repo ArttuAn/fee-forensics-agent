@@ -1,0 +1,25 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+include CONTRIBUTING.md
+include SECURITY.md
+include pyproject.toml
+include requirements.txt
+include requirements-dev.txt
+
+recursive-include finance_agent *.py
+recursive-include sample-data *.csv *.txt
+recursive-include examples *.md *.ps1
+recursive-include assets *.svg
+
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude *.so
+global-exclude .git*
+global-exclude .coverage
+global-exclude .pytest_cache
+global-exclude .ruff_cache
+global-exclude .mypy_cache
+global-exclude *.egg-info
+global-exclude dist
+global-exclude build

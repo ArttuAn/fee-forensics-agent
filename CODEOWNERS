@@ -1,0 +1,9 @@
+# Code Owners
+
+# Default code owners for the entire repository
+* @ArttuAn
+
+# Specific code owners for different areas
+/finance_agent/ @ArttuAn
+/tests/ @ArttuAn
+/.github/ @ArttuAn

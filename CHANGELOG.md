@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-07-04
+
+### Added
+- SECURITY.md security policy with vulnerability reporting guidelines
+- .editorconfig for consistent editor settings across team
+- CODEOWNERS file for code review assignment
+- GitHub issue templates (bug report, feature request)
+- GitHub pull request template with checklist
+- MANIFEST.in for proper package distribution
+- Release automation workflow for GitHub releases
+- Additional badges to README (MIT license, pre-commit, security, code style)
+
+### Changed
+- Updated README badges to show current coverage (81%)
+- Improved project documentation and governance
+
+### Security
+- Added security policy document
+- Added bandit security scanning to CI/CD
+- Added pip-audit for dependency vulnerability checking
+
 ## [0.2.0] - 2026-07-04
 
 ### Added
