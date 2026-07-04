@@ -118,3 +118,64 @@ def test_read_statement_csv_missing_column(tmp_path: Path) -> None:
     csv_path.write_text("date,description\n2026-01-01,FEE\n", encoding="utf-8")
     with pytest.raises(ValueError, match="Missing required column"):
         read_statement_csv(csv_path)
+
+
+def test_transaction_validation_empty_description() -> None:
+    from finance_agent.models import Transaction
+    from datetime import date
+    
+    with pytest.raises(ValueError, match="Description cannot be empty"):
+        Transaction(txn_date=date(2026, 1, 1), description="", amount=-10.0)
+
+
+def test_transaction_validation_whitespace_description() -> None:
+    from finance_agent.models import Transaction
+    from datetime import date
+    
+    with pytest.raises(ValueError, match="Description cannot be empty"):
+        Transaction(txn_date=date(2026, 1, 1), description="   ", amount=-10.0)
+
+
+def test_transaction_validation_invalid_amount() -> None:
+    from finance_agent.models import Transaction
+    from datetime import date
+    
+    with pytest.raises(ValueError, match="Amount must be numeric"):
+        Transaction(txn_date=date(2026, 1, 1), description="FEE", amount="invalid")
+
+
+def test_audit_with_zero_transactions() -> None:
+    rep = audit([])
+    assert rep.total_credits == 0.0
+    assert rep.total_debits == 0.0
+    assert rep.fee_total == 0.0
+    assert rep.interest_total == 0.0
+    assert len(rep.flagged) == 0
+    assert len(rep.recurring_fees) == 0
+
+
+def test_audit_with_only_credits() -> None:
+    txns = [
+        _txn(1, "DEPOSIT", 1000.0),
+        _txn(2, "SALARY", 5000.0),
+    ]
+    rep = audit(txns)
+    assert rep.fee_total == 0.0
+    assert rep.interest_total == 0.0
+    assert rep.total_credits == 6000.0
+    assert rep.total_debits == 0.0
+
+
+def test_extract_caps_from_empty_text() -> None:
+    caps = extract_caps_from_text("")
+    assert caps.monthly_fee_cap is None
+    assert caps.wire_fee_cap is None
+    assert caps.overdraft_fee_cap is None
+
+
+def test_render_markdown_without_agreement() -> None:
+    txns = [_txn(1, "MONTHLY FEE", -15.0)]
+    rep = audit(txns)
+    md = render_markdown(rep, agreement=None)
+    assert "## Agreement caps" not in md
+    assert "## Possible agreement cap breaches" not in md

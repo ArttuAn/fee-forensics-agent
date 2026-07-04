@@ -117,10 +117,34 @@ flowchart TB
 
 Requires **Python 3.10+**.
 
+### Using pip (recommended)
+
 ```bash
+pip install fee-forensics-agent
+```
+
+### From source
+
+```bash
+git clone https://github.com/ArttuAn/fee-forensics-agent.git
+cd fee-forensics-agent
 python -m venv .venv
-.\.venv\Scripts\activate
+.\.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
 pip install -e .
+```
+
+### Development installation
+
+```bash
+pip install -e ".[dev]"
+pre-commit install
+```
+
+### Using Makefile (Linux/Mac)
+
+```bash
+make install-dev
 ```
 
 ## Quickstart
@@ -220,8 +244,45 @@ Alternatively, use separate **debit** and **credit** columns (`debit`/`credit`, 
 fee-forensics audit sample-data\statement.csv --out reports\report.md --json-out reports\report.json
 ```
 
+## Development
+
+### Available Makefile commands
+
+```bash
+make help           # Show all available commands
+make install        # Install the package
+make install-dev    # Install with development dependencies
+make test           # Run tests
+make test-cov       # Run tests with coverage report
+make lint           # Run linting checks
+make format         # Format code
+make clean          # Clean build artifacts
+make demo           # Run the demo
+make pre-commit-install  # Install pre-commit hooks
+make pre-commit-run      # Run pre-commit hooks
+make check          # Run all checks (lint + test)
+```
+
+### Running tests
+
+```bash
+pytest
+```
+
+With coverage:
+```bash
+pytest --cov=finance_agent --cov-report=term-missing
+```
+
+### Code quality
+
+```bash
+ruff check .        # Lint
+ruff format .       # Format
+```
+
 ## Notes / roadmap
 
 - Add PDF statement ingestion
-- Add “what to ask the bank” suggestion pack
+- Add "what to ask the bank" suggestion pack
 - Add optional LLM enrichment (fully local/offline or API-backed)

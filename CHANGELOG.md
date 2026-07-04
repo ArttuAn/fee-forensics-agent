@@ -5,20 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2026-07-04
 
 ### Added
 - LICENSE file (MIT License)
 - CONTRIBUTING.md with development guidelines
 - CHANGELOG.md for tracking version changes
-- Improved code documentation with docstrings
-- Enhanced type hints across all modules
-- Better error handling and validation
+- Pre-commit hooks configuration for code quality
+- requirements.txt and requirements-dev.txt for easier installation
+- Makefile with common development tasks
+- Comprehensive docstrings to all functions across modules
+- Transaction model validation for amount and description fields
+- Edge case tests for validation and error handling
+- Development section in README with Makefile commands
 
 ### Changed
-- Updated dependencies to latest stable versions
-- Improved CI/CD pipeline with security checks
-- Enhanced test coverage
+- Updated dependencies to latest stable versions (pandas>=2.2.3, python-dateutil>=2.9.0, rich>=13.9.0, typer>=0.12.5, pytest>=8.3.0, ruff>=0.7.0)
+- Improved CI/CD pipeline with security (bandit) and dependency (pip-audit) checks
+- Enhanced test coverage from ~65% to 81%
+- Added try-catch error handling to CLI commands
+- Enhanced type hints across all modules
+
+### Fixed
+- Better error handling in CLI commands with graceful exit
+- Transaction validation prevents empty/whitespace descriptions and invalid amounts
 
 ## [0.1.2] - 2026-01-XX
 
