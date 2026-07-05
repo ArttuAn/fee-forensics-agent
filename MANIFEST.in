@@ -6,6 +6,7 @@ include SECURITY.md
 include pyproject.toml
 include requirements.txt
 include requirements-dev.txt
+include .dockerignore
 
 recursive-include finance_agent *.py
 include finance_agent/py.typed

@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-05
+
+### Added
+- .dockerignore for optimized Docker builds
+- Docker usage section to README with build and run instructions
+- .github/FUNDING.yml for GitHub Sponsors support
+- examples/basic_usage.py script showing programmatic usage
+- examples/benchmark.py script for performance benchmarking
+- finance_agent/logging_config.py module for logging configuration
+- MANIFEST.in updated to include .dockerignore
+
+### Changed
+- Improved Docker documentation in README
+- Added programmatic usage examples
+- Added performance measurement capabilities
+
+### Documentation
+- Added Docker usage examples
+- Added programmatic API examples
+- Added benchmarking guide
+
 ## [0.4.0] - 2026-07-05
 
 ### Added

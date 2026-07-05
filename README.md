@@ -150,6 +150,30 @@ pre-commit install
 make install-dev
 ```
 
+### Using Docker
+
+Build the Docker image:
+
+```bash
+docker build -t fee-forensics .
+```
+
+Run the demo with Docker:
+
+```bash
+docker run --rm -v $(pwd)/sample-data:/app/sample-data -v $(pwd)/reports:/app/reports fee-forensics
+```
+
+Use docker-compose for easier development:
+
+```bash
+# Run the demo
+docker-compose up app
+
+# Start development container with shell access
+docker-compose run dev /bin/bash
+```
+
 ## Quickstart
 
 Use the included sample statement:
