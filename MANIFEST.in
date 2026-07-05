@@ -8,6 +8,7 @@ include requirements.txt
 include requirements-dev.txt
 
 recursive-include finance_agent *.py
+include finance_agent/py.typed
 recursive-include sample-data *.csv *.txt
 recursive-include examples *.md *.ps1
 recursive-include assets *.svg

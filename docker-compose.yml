@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fee-forensics
+    volumes:
+      - ./sample-data:/app/sample-data:ro
+      - ./reports:/app/reports
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: fee-forensics demo
+
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fee-forensics-dev
+    volumes:
+      - .:/app
+      - ./sample-data:/app/sample-data
+      - ./reports:/app/reports
+    environment:
+      - PYTHONUNBUFFERED=1
+    working_dir: /app
+    command: /bin/bash
+    stdin_open: true
+    tty: true

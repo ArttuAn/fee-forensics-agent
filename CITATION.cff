@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "name": "Fee Forensics Agent",
+  "description": "Finance AI agent: bank fee forensics + statement audit",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Arttu An",
+      "email": "arttu@example.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArttuAn/fee-forensics-agent"
+  },
+  "keywords": [
+    "finance",
+    "banking",
+    "fees",
+    "audit",
+    "csv",
+    "statement-analysis"
+  ]
+}

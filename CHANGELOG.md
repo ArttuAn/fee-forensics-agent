@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-07-05
+
+### Added
+- Dockerfile for containerization support
+- docker-compose.yml for development environment setup
+- tox.ini for multi-version Python testing (3.10, 3.11, 3.12, 3.13)
+- .vscode/settings.json for better IDE support with ruff integration
+- py.typed marker for PEP 561 type checking support
+- CODE_OF_CONDUCT.md with Contributor Covenant guidelines
+- SUPPORT.md with support guidelines and response times
+- CITATION.cff for academic citation support
+- MANIFEST.in updated to include py.typed marker
+
+### Changed
+- Improved development workflow with Docker support
+- Enhanced testing capabilities with tox for multiple Python versions
+- Better IDE experience with VSCode settings
+
+### Infrastructure
+- Added containerization support for consistent environments
+- Added multi-version testing infrastructure
+- Added IDE configuration for better developer experience
+
 ## [0.3.0] - 2026-07-04
 
 ### Added
