@@ -1,0 +1,13 @@
+# Fee Forensics Configuration File
+# Place this file as fee-forensics.yaml in your project directory
+
+# Audit thresholds
+flag_threshold_abs: 25.0  # Absolute threshold for flagging transactions
+flag_threshold_pct: 0.05   # Percentage threshold for flagging
+
+# Output settings
+output_dir: reports        # Default output directory for reports
+
+# Logging settings
+log_level: INFO            # DEBUG, INFO, WARNING, ERROR
+log_file: null             # Optional log file path (null for console only)

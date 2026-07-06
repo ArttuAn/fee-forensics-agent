@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-07-06
+
+### Added
+- ROADMAP.md for project planning and future features
+- ARCHITECTURE.md for system design documentation
+- finance_agent/config.py module for configuration management
+- fee-forensics.yaml configuration file template
+- tests/test_integration.py for end-to-end workflow testing
+- sample-data/statement-fees.csv (fees-only sample)
+- sample-data/statement-no-fees.csv (no-fee sample)
+- examples/workflow_automation.py for batch processing
+- .github/dependabot.yml for automated dependency updates
+- .github/workflows/stale.yml for stale issue management
+
+### Changed
+- Improved testing coverage with integration tests
+- Enhanced workflow automation capabilities
+- Added configuration file support for customization
+
+### Infrastructure
+- Added Dependabot for automated dependency management
+- Added stale issue workflow for repository maintenance
+- Enhanced sample data for testing scenarios
+
+### Documentation
+- Added comprehensive project roadmap
+- Added detailed architecture documentation
+- Added configuration guide
+
 ## [0.5.0] - 2026-07-05
 
 ### Added
