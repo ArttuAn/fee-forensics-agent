@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-07-07
+
+### Added
+- pyyaml>=6.0.0 to dependencies for configuration file support
+- .gitattributes for consistent line endings across platforms
+- AUTHORS.md for contributor credits
+- ACKNOWLEDGMENTS.md for third-party library credits
+- Configuration section to README with YAML and environment variable examples
+- Workflow automation section to README with batch processing examples
+- Custom configuration example to basic_usage.py
+
+### Changed
+- Updated examples/basic_usage.py to use config module
+- Updated MANIFEST.in to include new documentation files (ROADMAP.md, ARCHITECTURE.md, fee-forensics.yaml)
+- Improved documentation with configuration and workflow automation guides
+
+### Dependencies
+- Added pyyaml as a core dependency for YAML configuration support
+
+### Documentation
+- Enhanced README with configuration options
+- Added workflow automation documentation
+- Added contributor and acknowledgment documentation
+
 ## [0.6.0] - 2026-07-06
 
 ### Added

@@ -174,6 +174,54 @@ docker-compose up app
 docker-compose run dev /bin/bash
 ```
 
+## Configuration
+
+Fee Forensics supports configuration via YAML files or environment variables.
+
+### YAML Configuration
+
+Create a `fee-forensics.yaml` file in your project directory:
+
+```yaml
+# Audit thresholds
+flag_threshold_abs: 25.0  # Absolute threshold for flagging transactions
+flag_threshold_pct: 0.05   # Percentage threshold for flagging
+
+# Output settings
+output_dir: reports        # Default output directory for reports
+
+# Logging settings
+log_level: INFO            # DEBUG, INFO, WARNING, ERROR
+log_file: null             # Optional log file path (null for console only)
+```
+
+### Environment Variables
+
+You can also configure using environment variables:
+
+```bash
+export FF_FLAG_THRESHOLD_ABS=25.0
+export FF_FLAG_THRESHOLD_PCT=0.05
+export FF_OUTPUT_DIR=reports
+export FF_LOG_LEVEL=INFO
+export FF_LOG_FILE=audit.log
+```
+
+### Programmatic Configuration
+
+```python
+from finance_agent.config import Config, get_config
+
+# Load from file
+config = Config.from_yaml(Path("fee-forensics.yaml"))
+
+# Load from environment
+config = Config.from_env()
+
+# Use defaults
+config = get_config()
+```
+
 ## Quickstart
 
 Use the included sample statement:
@@ -205,6 +253,36 @@ fee-forensics audit sample-data\statement.csv --agreement sample-data\agreement.
 - **Examples folder**: see `examples/README.md`
 - **Sample output**: `examples/output/sample-report.md`
 - **PowerShell runner**: `examples/run_examples.ps1`
+
+## Workflow Automation
+
+For batch processing multiple statements, use the workflow automation script:
+
+### Single File Audit
+
+```bash
+python examples/workflow_automation.py single sample-data/statement.csv --output reports
+```
+
+### Batch Processing
+
+```bash
+python examples/workflow_automation.py batch sample-data/ --output reports
+```
+
+### With Configuration
+
+```bash
+python examples/workflow_automation.py single sample-data/statement.csv --config fee-forensics.yaml
+```
+
+### With Agreement
+
+```bash
+python examples/workflow_automation.py single sample-data/statement.csv --agreement sample-data/agreement.txt
+```
+
+The automation script generates both Markdown and JSON reports for each statement.
 
 ## LangChain + LangSmith (explain workflow)
 
