@@ -1,0 +1,28 @@
+# Labeler Configuration
+# Automatically labels pull requests based on changed files
+
+bug:
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.py']
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.md', '**/*.rst']
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file: ['requirements*.txt', 'pyproject.toml', 'setup.py']
+
+ci:
+  - changed-files:
+    - any-glob-to-any-file: ['.github/**/*']
+
+tests:
+  - changed-files:
+    - any-glob-to-any-file: ['tests/**/*', '**/test_*.py']
+
+enhancement:
+  - head-branch: ['feature/*', 'enhance/*']
+
+breaking:
+  - head-branch: ['breaking/*']

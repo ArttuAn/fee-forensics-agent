@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-07-07
+
+### Added
+- CodeQL security scanning workflow (.github/workflows/codeql.yml)
+- Dependency review workflow (.github/workflows/dependency-review.yml)
+- Automatic PR labeling workflow (.github/workflows/labeler.yml)
+- Question issue template (.github/ISSUE_TEMPLATE/question.md)
+- Documentation issue template (.github/ISSUE_TEMPLATE/documentation.md)
+- Labeler configuration (.github/labeler.yml) for automatic PR labeling
+- Enhanced .pre-commit-config.yaml with bandit and mypy hooks
+
+### Changed
+- Updated requirements.txt to include pyyaml>=6.0.0
+- Enhanced pre-commit hooks with security and type checking
+
+### Security
+- Added CodeQL scanning for security vulnerability detection
+- Added dependency review for supply chain security
+- Added bandit security scanning to pre-commit hooks
+
+### CI/CD
+- Enhanced GitHub Actions workflows with security checks
+- Automated PR labeling based on changed files
+- Improved issue templates for better bug reporting
+
 ## [0.7.0] - 2026-07-07
 
 ### Added
